@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         //mToast.show();
 
         Context context = this;
-        Class destinationClass = DetailedView.class;//todo create activity and change this line
+        Class destinationClass = DetailedView.class;// create activity and change this line
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
         intentToStartDetailActivity.putExtra("DetailedMovieData",simpleJsonMovieData[clickedItemIndex]);
         startActivity(intentToStartDetailActivity);

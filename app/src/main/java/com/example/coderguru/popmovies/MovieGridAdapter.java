@@ -79,7 +79,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Post
             //"w92", "w154", "w185", "w342", "w500", "w780", or "original". size
             if(simpleJsonMovieData!=null) {
 
-                //todo instead of using getposterpath we need to directly call the field. or parcelable
+                //no need/ instead of using getposterpath we need to directly call the field. or parcelable
                 Picasso.with(context).load("http://image.tmdb.org/t/p/w500" + simpleJsonMovieData[listIndex].getPosterPath()).into(poster);
             }
         }
