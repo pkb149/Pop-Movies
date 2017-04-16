@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pop Movies</string>
+    <string name="api_key">0beb13856cb6a24fc8bd27b4dbfcbfe9</string>
+    <string name="language">en-US</string>
 </resources>
