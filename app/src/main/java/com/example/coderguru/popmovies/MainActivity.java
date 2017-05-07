@@ -2,6 +2,9 @@ package com.example.coderguru.popmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +13,7 @@ import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,8 +34,6 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity implements MovieGridAdapter.GridItemClickListener {
-    String type = "popularity.desc";
-    TextView textView;
     MovieData[] simpleJsonMovieData;
     Toast mToast;
     MovieGridAdapter.GridItemClickListener listener;
@@ -44,28 +46,41 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listener = this;
-        // LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mPosterGrid = (RecyclerView) findViewById(R.id.rv_posters);
-        mPosterGrid.setLayoutManager(layoutManager);
+        if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_PORTRAIT){
+            GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+            mPosterGrid.setLayoutManager(layoutManager);
+        }
+        else{
+            GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+            mPosterGrid.setLayoutManager(layoutManager);
+        }
         mPosterGrid.setHasFixedSize(true);
 
         // create a loader in activity main
         // make it visible
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
-        new MovieDataTask().execute("popularity.desc");
+        new MovieDataTask().execute("popular");
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     URL UriBuilder(String type) {
-        final String BASE_URL =
-                "https://api.themoviedb.org/3/discover/movie";
+        final String BASE_URL = "https://api.themoviedb.org/3/movie";
+                //"https://api.themoviedb.org/3/discover/movie";
         //String apiKey="0beb13856cb6a24fc8bd27b4dbfcbfe9";
         //String language="en-US";
         Uri uri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(type)
                 .appendQueryParameter("api_key", getString(R.string.api_key))
                 .appendQueryParameter("language", getString(R.string.language))
-                .appendQueryParameter("sort_by", type)
+                .appendQueryParameter("page", "1")
                 .build();
         URL url = null;
         try {
@@ -126,15 +141,14 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
             } else {
                 Log.d(this.toString(), reqestURL.toString());
             }
-            try {
-                String Response = getResponseFromHttpUrl(reqestURL);
-                simpleJsonMovieData = ParseJSON.getSimpleMovieStringsFromJson(getApplicationContext(), Response);
-                return simpleJsonMovieData;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-
+                try {
+                    String Response = getResponseFromHttpUrl(reqestURL);
+                    simpleJsonMovieData = ParseJSON.getSimpleMovieStringsFromJson(getApplicationContext(), Response);
+                    return simpleJsonMovieData;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
         }
 
         @Override
@@ -152,6 +166,9 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
                 // set the loader invisible
                 // }
             }
+            else{
+                Toast.makeText(getApplicationContext(),"Couldn't load data! Please check your internet connection and try again.",Toast.LENGTH_LONG);
+            }
         }
     }
 
@@ -165,16 +182,14 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.popularity) {
             // clear the rvadapter
-            mAdapter.setMovieData(null);
-            new MovieDataTask().execute("popularity.desc");
+            new MovieDataTask().execute("popular");
             // completed Start Async Task
             progressBar.setVisibility(View.VISIBLE);
             return true;
         }
         else if (item.getItemId() == R.id.rating) {
             // clear the rv adapter
-            mAdapter.setMovieData(null);
-            new MovieDataTask().execute("vote_average.desc");
+            new MovieDataTask().execute("top_rated");
             // completed Start Async Task
             progressBar.setVisibility(View.VISIBLE);
             return true;

@@ -40,7 +40,7 @@ public final class ParseJSON {
                 parsedMovieData[i].setOverview(movie.getString("overview"));
                 parsedMovieData[i].setRelease_date(movie.getString("release_date"));
                 parsedMovieData[i].setId(movie.getString("id"));
-                parsedMovieData[i].setvoteAverage(movie.getString("vote_average"));
+                parsedMovieData[i].setVoteAverage(movie.getString("vote_average"));
                 //completed set other fields that we require in the next page
                 //update movie data class as needed
             }

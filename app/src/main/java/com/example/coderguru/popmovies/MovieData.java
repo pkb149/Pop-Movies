@@ -73,8 +73,8 @@ class MovieData implements Parcelable {
         this.id = id;
     }
 
-    public void setvoteAverage(String voteAverage) {
-        this.id = id;
+    public void setVoteAverage(String voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
     @Override

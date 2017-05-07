@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -26,9 +27,13 @@ public class DetailedView extends AppCompatActivity {
         TextView overview=(TextView)findViewById(R.id.tv_overview);
         if(movieData!=null){
             title.setText(movieData.getOriginalTitle());
-            Picasso.with(this).load("http://image.tmdb.org/t/p/w500" + movieData.getPosterPath()).into(poster);
+            Picasso.with(this).load("http://image.tmdb.org/t/p/w500" + movieData.getPosterPath())
+                    .placeholder(R.drawable.loading)
+                    .error(R.drawable.error)
+                    .into(poster);
             releaseDate.append(movieData.getRelease_date());
-            voteAverage.setText(movieData.getvoteAverage());
+            voteAverage.setText(movieData.getvoteAverage()+"/10");
+            //Toast.makeText(this,"vote: "+movieData.getvoteAverage(),Toast.LENGTH_LONG).show();
             overview.setText(movieData.getOverview());
 
         }
